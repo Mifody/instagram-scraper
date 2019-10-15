@@ -28,6 +28,7 @@ import threading
 import concurrent.futures
 import requests
 import tqdm
+import re
 
 from instagram_scraper.constants import *
 
@@ -239,6 +240,7 @@ class InstagramScraper(object):
         """Logs in to instagram."""
         self.session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
         req = self.session.get(BASE_URL)
+        match = re.search('"rollout_hash":"([^"]+)"', subject)
 
         self.session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
 
@@ -247,6 +249,13 @@ class InstagramScraper(object):
         #  with re pattern "instagramWebDesktopFBAppId='([^']+))'"
         self.session.headers.update({'X-IG-App-ID': '936619743392459'})
 
+        self.session.headers.update({'X-IG-WWW-Claim': '0'})
+        if match:
+            self.session.headers.update({'X-Instagram-AJAX': match.group(1)})
+        else:
+            # TODO: Set default value, fetched from web page
+            self.session.headers.update({'X-Instagram-AJAX': '1fa138d07f4c'})
+        self.session.headers.update({'X-Requested-With': 'XMLHttpRequest'})
 
         login_data = {'username': self.login_user, 'password': self.login_pass}
         login = self.session.post(LOGIN_URL, data=login_data, allow_redirects=True)
