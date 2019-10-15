@@ -242,6 +242,12 @@ class InstagramScraper(object):
 
         self.session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
 
+        # TODO: Maybe get X-IG-App-ID from
+        #  https://www.instagram.com/static/bundles/es6/ConsumerLibCommons.js/258de56d5e8a.js
+        #  with re pattern "instagramWebDesktopFBAppId='([^']+))'"
+        self.session.headers.update({'X-IG-App-ID': '936619743392459'})
+
+
         login_data = {'username': self.login_user, 'password': self.login_pass}
         login = self.session.post(LOGIN_URL, data=login_data, allow_redirects=True)
         self.session.headers.update({'X-CSRFToken': login.cookies['csrftoken']})
