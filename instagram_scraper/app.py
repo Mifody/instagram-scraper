@@ -240,7 +240,7 @@ class InstagramScraper(object):
         """Logs in to instagram."""
         self.session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
         req = self.session.get(BASE_URL)
-        match = re.search('"rollout_hash":"([^"]+)"', subject)
+        match = re.search('"rollout_hash":"([^"]+)"', req.text)
 
         self.session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
 
@@ -257,7 +257,14 @@ class InstagramScraper(object):
             self.session.headers.update({'X-Instagram-AJAX': '1fa138d07f4c'})
         self.session.headers.update({'X-Requested-With': 'XMLHttpRequest'})
 
-        login_data = {'username': self.login_user, 'password': self.login_pass}
+        login_data = {
+            'username': self.login_user,
+            'password': self.login_pass,
+            'enc_password': '',
+            'queryParams': '{"source":"auth_switcher"}',
+            'optIntoOneTap': False,
+
+        }
         login = self.session.post(LOGIN_URL, data=login_data, allow_redirects=True)
         self.session.headers.update({'X-CSRFToken': login.cookies['csrftoken']})
         self.cookies = login.cookies
