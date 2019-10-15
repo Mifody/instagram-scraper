@@ -238,8 +238,8 @@ class InstagramScraper(object):
 
     def authenticate_with_login(self):
         """Logs in to instagram."""
-        self.session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
-        req = self.session.get(BASE_URL)
+        self.session.headers.update({'Referer': BASE_URL, 'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'})
+        req = self.session.get("https://www.instagram.com/accounts/login/?source=auth_switcher")
         match = re.search('"rollout_hash":"([^"]+)"', req.text)
 
         self.session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
